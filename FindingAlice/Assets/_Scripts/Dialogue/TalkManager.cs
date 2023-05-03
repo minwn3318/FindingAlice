@@ -30,7 +30,7 @@ public class TalkData
 
 public class TalkManager : MonoBehaviour
 {
-    Dictionary<int, TalkData[]> talkData;
+    public Dictionary<int, TalkData[]> talkData;
 
     Sprite rabbit;
     Sprite parentRabbit;
@@ -38,7 +38,7 @@ public class TalkManager : MonoBehaviour
     Sprite sunbi;
     Sprite none;
 
-    private void Awake()
+    public void Awake()
     {
         talkData = new Dictionary<int, TalkData[]>();
         rabbit = Resources.LoadAll<Sprite>("토끼_2")[0];

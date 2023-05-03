@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.EventSystems;
 
 public class DialogueManager : MonoBehaviour
 {
@@ -15,7 +16,7 @@ public class DialogueManager : MonoBehaviour
     public Image[] talkImage;
     public GameObject scanObject;
     public int talkIndex;
-
+    public GameObject skipButton;
     public bool isActive = false;
 
     public ObjData objData;
@@ -24,7 +25,8 @@ public class DialogueManager : MonoBehaviour
     private void Start()
     {
         sceanName = SceneManager.GetActiveScene().name;
-        for (int i = 1; i < 3; i++) {
+        for (int i = 1; i < 3; i++)
+        {
             if (sceanName == "TutoTalk " + i)
             {
                 fade = GameObject.Find("FadeImage");
@@ -32,11 +34,12 @@ public class DialogueManager : MonoBehaviour
                 break;
             }
         }
+        TalkData talkData = talkManager.GetTalk(objData.id, talkIndex);
     }
 
     private void Update()
     {
-        if(isActive)
+        if (isActive)
         {
 #if UNITY_ANDROID
             for (int touch = 0; touch < Input.touchCount; touch++)
@@ -52,15 +55,37 @@ public class DialogueManager : MonoBehaviour
             if (Input.GetMouseButtonDown(0))
             {
                 if (objData == null)
+                {
                     return;
-                Talk(objData.id);
+                }
+                else
+                {
+                    if (EventSystem.current.currentSelectedGameObject == skipButton)
+                    {
+                        isActive = false;
+                        talkIndex = 0;
+                        for (int i = 0; i < talkImage.Length; i++)
+                        {
+                            talkImage[i].sprite = null;
+                        }
+                        talkPanel.SetActive(isActive);
+                        jumpButton.SetActive(!isActive);
+                        joystick.SetActive(!isActive);
+                        objData.checkRead = true;
+                    }
+
+                    else
+                    {
+                        Talk(objData.id);
+                    }
+                }
             }
 #endif
         }
     }
     public void Action(GameObject scanObj)
     {
-        if(!isActive)
+        if (!isActive)
         {
             scanObject = scanObj;
             objData = scanObject.GetComponent<ObjData>();
@@ -68,7 +93,7 @@ public class DialogueManager : MonoBehaviour
                 return;
             isActive = true;
             ClockManager.C.clockReset();
-            Talk(objData.id);            
+            Talk(objData.id);
         }
         talkPanel.SetActive(isActive);
         jumpButton.SetActive(!isActive);
@@ -77,6 +102,7 @@ public class DialogueManager : MonoBehaviour
 
     RectTransform r;
     GameObject fade;
+
     private void Talk(int id)
     {
         TalkData talkData = talkManager.GetTalk(id, talkIndex);
@@ -88,12 +114,12 @@ public class DialogueManager : MonoBehaviour
             {
                 if (sceanName == "TutoTalk " + i)
                 {
-                    
+
                     fade.SetActive(true);
                     break;
                 }
             }
-            for (int i = 0; i< talkImage.Length; i++)
+            for (int i = 0; i < talkImage.Length; i++)
             {
                 talkImage[i].sprite = null;
             }
@@ -103,17 +129,19 @@ public class DialogueManager : MonoBehaviour
             objData.checkRead = true;
             return;
         }
+
+
         talkName.text = talkData.name;
-        
+
         for (int i = 0; i < (int)Position.max; i++)
         {
             if (talkData.sprite != null)
             {
-                if(i == (int)talkData.position)
+                if (i == (int)talkData.position)
                 {
                     talkImage[i].color = Color.white;
                     r = (RectTransform)talkImage[i].transform;
-                    if(talkData.sprite.name == "ParentRabbit")
+                    if (talkData.sprite.name == "ParentRabbit")
                     {
                         float ratio = 600 / talkData.sprite.rect.height;
                         r.sizeDelta = new Vector2(talkData.sprite.rect.width * ratio, talkData.sprite.rect.height * ratio);
@@ -128,13 +156,16 @@ public class DialogueManager : MonoBehaviour
                         talkImage[i].color = SetColorAlpha(talkImage[i].color, 0);
                 }
             }
-            
+
         }
+
         talkImage[(int)talkData.position].sprite = talkData.sprite;
         talkText.text = talkData.talkContents;
         isActive = true;
         talkIndex++;
+
     }
+
     Color SetColorAlpha(Color c, float a)
     {
         Color color = c;
