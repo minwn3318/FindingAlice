@@ -24418,6 +24418,7 @@ MonoBehaviour:
   - {fileID: 1037062449}
   scanObject: {fileID: 0}
   talkIndex: 0
+  skipButton: {fileID: 1420142640}
   isActive: 0
   objData: {fileID: 0}
 --- !u!4 &1695426858
