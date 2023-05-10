@@ -17,6 +17,7 @@ public class DialogueManager : MonoBehaviour
     public GameObject scanObject;
     public int talkIndex;
     public GameObject skipButton;
+
     public bool isActive = false;
 
     public ObjData objData;
@@ -35,7 +36,6 @@ public class DialogueManager : MonoBehaviour
                 break;
             }
         }
-        TalkData talkData = talkManager.GetTalk(objData.id, talkIndex);
     }
 
     private void Update()
@@ -58,7 +58,28 @@ public class DialogueManager : MonoBehaviour
                 if (objData == null)
                 {
                     return;
-                Talk(objData.id);
+                }
+                else
+                {
+                    if (EventSystem.current.currentSelectedGameObject == skipButton)
+                    {
+                        isActive = false;
+                        talkIndex = 0;
+                        for (int i = 0; i < talkImage.Length; i++)
+                        {
+                            talkImage[i].sprite = null;
+                        }
+                        talkPanel.SetActive(isActive);
+                        jumpButton.SetActive(!isActive);
+                        joystick.SetActive(!isActive);
+                        objData.checkRead = true;
+                    }
+
+                    else
+                    {
+                        Talk(objData.id);
+                    }
+                }
             }
 #endif
         }
@@ -75,14 +96,13 @@ public class DialogueManager : MonoBehaviour
             ClockManager.C.clockReset();
             Talk(objData.id);
         }
-		talkPanel.SetActive(isActive);
+        talkPanel.SetActive(isActive);
         jumpButton.SetActive(!isActive);
         joystick.SetActive(!isActive);
     }
 
     RectTransform r;
     GameObject fade;
-
     private void Talk(int id)
     {
         TalkData talkData = talkManager.GetTalk(id, talkIndex);
@@ -109,8 +129,6 @@ public class DialogueManager : MonoBehaviour
             objData.checkRead = true;
             return;
         }
-
-
         talkName.text = talkData.name;
 
         for (int i = 0; i < (int)Position.max; i++)
@@ -142,9 +160,7 @@ public class DialogueManager : MonoBehaviour
         talkText.text = talkData.talkContents;
         isActive = true;
         talkIndex++;
-
     }
-
     Color SetColorAlpha(Color c, float a)
     {
         Color color = c;
