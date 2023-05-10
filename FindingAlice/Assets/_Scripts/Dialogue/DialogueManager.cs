@@ -20,6 +20,7 @@ public class DialogueManager : MonoBehaviour
     public bool isActive = false;
 
     public ObjData objData;
+    public EffectSound SFXSound;
 
     string sceanName;
     private void Start()
@@ -57,28 +58,7 @@ public class DialogueManager : MonoBehaviour
                 if (objData == null)
                 {
                     return;
-                }
-                else
-                {
-                    if (EventSystem.current.currentSelectedGameObject == skipButton)
-                    {
-                        isActive = false;
-                        talkIndex = 0;
-                        for (int i = 0; i < talkImage.Length; i++)
-                        {
-                            talkImage[i].sprite = null;
-                        }
-                        talkPanel.SetActive(isActive);
-                        jumpButton.SetActive(!isActive);
-                        joystick.SetActive(!isActive);
-                        objData.checkRead = true;
-                    }
-
-                    else
-                    {
-                        Talk(objData.id);
-                    }
-                }
+                Talk(objData.id);
             }
 #endif
         }
@@ -95,7 +75,7 @@ public class DialogueManager : MonoBehaviour
             ClockManager.C.clockReset();
             Talk(objData.id);
         }
-        talkPanel.SetActive(isActive);
+		talkPanel.SetActive(isActive);
         jumpButton.SetActive(!isActive);
         joystick.SetActive(!isActive);
     }
@@ -158,7 +138,6 @@ public class DialogueManager : MonoBehaviour
             }
 
         }
-
         talkImage[(int)talkData.position].sprite = talkData.sprite;
         talkText.text = talkData.talkContents;
         isActive = true;

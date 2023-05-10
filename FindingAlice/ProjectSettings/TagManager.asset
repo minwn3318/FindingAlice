@@ -13,6 +13,9 @@ TagManager:
   - NPC
   - Item
   - CheckWall
+  - OxygenArea
+  - TigerClaw
+  - TigerPattern
   layers:
   - Default
   - TransparentFX
