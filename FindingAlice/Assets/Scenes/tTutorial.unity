@@ -9261,6 +9261,10 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 768967412}
+    - target: {fileID: 1214325912, guid: 5e5c0f4c67600f749a461ce5c3d040a7, type: 3}
+      propertyPath: m_RootOrder
+      value: 12
+      objectReference: {fileID: 0}
     - target: {fileID: 164538577990829892, guid: 5e5c0f4c67600f749a461ce5c3d040a7,
         type: 3}
       propertyPath: m_Pivot.x
@@ -9398,6 +9402,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5e5c0f4c67600f749a461ce5c3d040a7, type: 3}
+--- !u!1 &654306311 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7955903201027591942, guid: 5e5c0f4c67600f749a461ce5c3d040a7,
+    type: 3}
+  m_PrefabInstance: {fileID: 654306310}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &659834759
 GameObject:
   m_ObjectHideFlags: 0
@@ -24419,6 +24429,7 @@ MonoBehaviour:
   - {fileID: 1037062449}
   scanObject: {fileID: 0}
   talkIndex: 0
+  skipButton: {fileID: 654306311}
   isActive: 0
   objData: {fileID: 0}
   SFXSound: {fileID: 0}

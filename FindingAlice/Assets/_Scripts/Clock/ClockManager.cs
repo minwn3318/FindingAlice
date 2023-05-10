@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Rendering;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityStandardAssets.CrossPlatformInput;
@@ -48,6 +49,8 @@ public class ClockManager : MonoBehaviour
     Rigidbody rb;
 
     GameObject[] clock_UI = new GameObject[2];
+    Image[] clock_Image = new Image[2];
+    float filled_ClockImage; 
 
     //lever의 transform 저장 벡터
     [SerializeField] Vector3 _touchAndDragPos = Vector3.zero;
@@ -117,9 +120,15 @@ public class ClockManager : MonoBehaviour
 
             if (temp < _clockCounter)
                 for (int i = 0; i< _clockCounter; i++)
-                    clock_UI[i].SetActive(true);
+                {
+                    clock_Image[i].fillAmount = 0;
+                }
             else if (temp > _clockCounter)
-                clock_UI[_clockCounter].SetActive(false);
+                for (int i = 1; i > _clockCounter - 1; i--)
+                {
+                    clock_Image[i].fillAmount = 1;
+                }
+             //   clock_Image[_clockCounter].fillAmount = 0;
             //if (temp < _clockCounter)
             //    clock_UI[_clockCounter - 1].SetActive(true);
             //else if (temp > _clockCounter)
@@ -137,7 +146,11 @@ public class ClockManager : MonoBehaviour
         clockBackMatAlpha = clockBackMat.color.a;
         
         for (int i = 0; i < 2; i++)
+        {
             clock_UI[i] = GameObject.Find("ClockCounter").transform.GetChild(i).gameObject;
+            clock_Image[i] = clock_UI[i].GetComponent<Image>();
+        }
+            
 
         clockMaxRange = range.transform.lossyScale.x * 3.0f;
         playerColliderHeight = player.GetComponent<CapsuleCollider>().height;
@@ -150,15 +163,7 @@ public class ClockManager : MonoBehaviour
         dX = touchAndDragPos.x;
         dY = touchAndDragPos.y;
 
-        if (clockCounter == 2)
-            clockReloadStart = Time.time;
-
-        //시계 발사 횟수가 2회 이하면서 재충전 시간이 충족된다면 시계 횟수 증가
-        if (clockCounter < 2 && Time.time - clockReloadStart > clockReloadTime)
-        {
-            clockCounter++;
-            clockReloadStart = Time.time;
-        }
+        ClockCharging_Image();
 
         if (CS == ClockState.shoot || CS == ClockState.shootMaximum)
         {
@@ -276,6 +281,47 @@ public class ClockManager : MonoBehaviour
                     clockReset();
                 }
                 break;
+        }
+    }
+
+    public void ClockCharging_Image()
+    {
+        if (clockCounter == 2)
+        {
+            clockReloadStart = Time.time;
+        }
+
+        // 시계 카운트가 1회이면 두번째 시계의 UI 이미지 충전
+        else if (clockCounter == 1)
+        {
+            clock_Image[1].fillAmount -= 1 / clockReloadTime * Time.deltaTime;
+            filled_ClockImage = clock_Image[clockCounter].fillAmount;
+
+            if (clock_Image[1].fillAmount <= 0)
+            {
+                clockCounter++;
+                clockReloadStart = Time.time;
+            }
+        }
+
+        // 시계 카운트가 0회이면 첫번째 시계의 UI 이미지 충전
+        else  
+        {
+            if (filled_ClockImage != 0)
+            {
+                clock_Image[0].fillAmount = filled_ClockImage;
+                filled_ClockImage= 0;
+            }
+
+            else
+            {
+                clock_Image[0].fillAmount -= 1 / clockReloadTime * Time.deltaTime;
+            }
+                if (clock_Image[0].fillAmount <= 0)
+                {
+                    clockCounter++;
+                    clockReloadStart = Time.time;
+                }
         }
     }
 
